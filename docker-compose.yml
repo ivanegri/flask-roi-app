@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    build: https://github.com/ivanegri/flask-roi-app.git#main
     ports:
       - "5005:5000"
     volumes:
