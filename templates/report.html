@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-12">
+
+    <!-- KPI CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- ROI Card -->
+        <div class="glass-panel p-6 text-center border-t-4 border-t-green-400">
+            <h3 class="text-slate-400 uppercase tracking-widest text-xs font-bold">ROI (1º Ano)</h3>
+            <div class="text-5xl font-extrabold text-white mt-2">{{ roi_percentage | number }}%</div>
+            <p class="text-green-400 text-sm mt-2 font-semibold">Retorno sobre Investimento</p>
+        </div>
+
+        <!-- Savings Card -->
+        <div class="glass-panel p-6 text-center border-t-4 border-t-blue-400">
+            <h3 class="text-slate-400 uppercase tracking-widest text-xs font-bold">Economia Anual</h3>
+            <div class="text-4xl font-bold text-white mt-3">{{ savings_y1 | currency }}</div>
+            <p class="text-blue-400 text-sm mt-2 font-semibold">Redução de Custos (12 meses)</p>
+        </div>
+
+        <!-- Payback Card -->
+        <div class="glass-panel p-6 text-center border-t-4 border-t-purple-400">
+            <h3 class="text-slate-400 uppercase tracking-widest text-xs font-bold">Payback</h3>
+            <div class="text-4xl font-bold text-white mt-3">{{ payback_month }}</div>
+            <p class="text-purple-400 text-sm mt-2 font-semibold">Tempo de Retorno</p>
+        </div>
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="glass-panel p-6">
+            <h3 class="text-lg font-semibold text-white mb-6">Fluxo Acumulado (12 Meses)</h3>
+            <canvas id="cumulativeChart"></canvas>
+        </div>
+
+        <div class="glass-panel p-6 flex flex-col justify-center">
+            <h3 class="text-lg font-semibold text-white mb-6">Comparativo de Custo Anual</h3>
+            <div class="flex items-end space-x-8 h-64 px-8 justify-center">
+                <!-- Human Bar -->
+                <div class="w-24 bg-pink-600 rounded-t-lg relative group transition-all hover:bg-pink-500"
+                    style="height: 100%;">
+                    <div class="absolute -top-8 w-full text-center text-white font-bold text-sm">{{ total_human_annual |
+                        currency }}</div>
+                    <div class="absolute bottom-4 w-full text-center text-white/80 font-semibold">Humano</div>
+                </div>
+                <!-- AI Bar -->
+                <div id="ai-bar" data-height="{{ ai_bar_height }}"
+                    class="w-24 bg-indigo-600 rounded-t-lg relative group transition-all hover:bg-indigo-500">
+                    <div class="absolute -top-8 w-full text-center text-white font-bold text-sm">{{ total_ai_annual_opex
+                        | currency }}</div>
+                    <div class="absolute bottom-4 w-full text-center text-white/80 font-semibold">IA (Opex)</div>
+                </div>
+            </div>
+            <p class="text-center text-slate-400 text-sm mt-6">Comparação apenas de custos operacionais (OPEX)</p>
+        </div>
+    </div>
+
+    <!-- DETAILS TABLE -->
+    <div class="glass-panel p-8 overflow-hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-white">Detalhamento Financeiro</h3>
+            <div class="text-sm text-slate-400">Dados baseados em projeção de 12 meses</div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-700 text-slate-400 text-sm">
+                        <th class="py-3 px-4">Item</th>
+                        <th class="py-3 px-4 text-right">Humano (Atual)</th>
+                        <th class="py-3 px-4 text-right">AI (Proposto)</th>
+                    </tr>
+                </thead>
+                <tbody class="text-slate-300 text-sm divide-y divide-slate-800">
+                    <tr>
+                        <td class="py-3 px-4">Custo / Plano Mensal</td>
+                        <td class="py-3 px-4 text-right">{{ (total_human_annual / 12) | currency }} (médio/mês)</td>
+                        <td class="py-3 px-4 text-right">{{ inputs.monthly_sub | currency }} + Variável</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3 px-4">Setup / Investimento</td>
+                        <td class="py-3 px-4 text-right">R$ 0,00</td>
+                        <td class="py-3 px-4 text-right">{{ inputs.setup_fee | currency }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3 px-4 font-bold text-white">Custo Total Anual (Ano 1)</td>
+                        <td class="py-3 px-4 text-right font-bold text-pink-400">{{ total_human_annual | currency }}
+                        </td>
+                        <td class="py-3 px-4 text-right font-bold text-indigo-400">{{ total_ai_y1 | currency }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3 px-4">Custo por Interação</td>
+                        <td class="py-3 px-4 text-right">{{ cost_per_interaction_human | currency }}</td>
+                        <td class="py-3 px-4 text-right text-green-400">
+                            ~ {{ ((total_ai_annual_opex / 12) / (total_human_annual / cost_per_interaction_human / 12))
+                            | currency if cost_per_interaction_human > 0 else 'N/A' }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center pt-8">
+        <a href="/" class="text-slate-400 hover:text-white underline transition-colors">← Voltar para Simulação</a>
+    </div>
+</div>
+
+<script id="chart-payload" type="application/json">
+    {{ chart_payload | tojson }}
+</script>
+<script>
+    // Set AI Bar Height dynamically to avoid linter errors with Jinja in style attribute
+    const aiBar = document.getElementById('ai-bar');
+    if (aiBar) {
+        aiBar.style.height = aiBar.dataset.height + '%';
+    }
+
+    const payload = JSON.parse(document.getElementById('chart-payload').textContent);
+    const ctx = document.getElementById('cumulativeChart').getContext('2d');
+
+    // Gradient for Human
+    const gradientHuman = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientHuman.addColorStop(0, 'rgba(236, 72, 153, 0.5)'); // Pink 500
+    gradientHuman.addColorStop(1, 'rgba(236, 72, 153, 0)');
+
+    // Gradient for AI
+    const gradientAI = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientAI.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); // Indigo 500
+    gradientAI.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: payload.labels,
+            datasets: [
+                {
+                    label: 'Custo Acumulado (Humano)',
+                    data: payload.human,
+                    borderColor: '#ec4899', // Pink 500
+                    backgroundColor: gradientHuman,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Custo Acumulado (IA)',
+                    data: payload.ai,
+                    borderColor: '#6366f1', // Indigo 500
+                    backgroundColor: gradientAI,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#cbd5e1' } // Slate 300
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#94a3b8' } // Slate 400
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/report" method="POST" class="space-y-8">
+    <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- COLUMN 1: HEAD OFFICE (SOLUTION) -->
+        <div class="glass-panel p-8 shadow-xl">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center mr-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-semibold text-white">Solução IA (Head Office)</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Setup / Implantação (R$)</label>
+                    <input type="number" name="setup_fee" value="5000" class="input-field w-full rounded-md p-3"
+                        required step="0.01">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Assinatura Mensal (R$)</label>
+                    <input type="number" name="monthly_sub" value="2500" class="input-field w-full rounded-md p-3"
+                        required step="0.01">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Custo Variável por Msg (R$)</label>
+                    <input type="number" name="cost_per_msg" value="0.04" class="input-field w-full rounded-md p-3"
+                        required step="0.0001">
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 2: CLIENT COSTS (HUMAN) -->
+        <div class="glass-panel p-8 shadow-xl border-t-4 border-t-pink-500">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center mr-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-semibold text-white">Operação Atual (Humano)</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Total Atendentes</label>
+                        <input type="number" name="num_agents" value="5" class="input-field w-full rounded-md p-3"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Salário Mensal (R$)</label>
+                        <input type="number" name="salary_monthly" value="2500"
+                            class="input-field w-full rounded-md p-3" required step="0.01">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Encargos (%)</label>
+                        <input type="number" name="social_charges_rate" value="40"
+                            class="input-field w-full rounded-md p-3" step="0.1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Benefícios (R$/mês)</label>
+                        <input type="number" name="benefits_monthly" value="650"
+                            class="input-field w-full rounded-md p-3" step="0.01">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Custo Plataformas/Rep
+                            (R$/mês)</label>
+                        <input type="number" name="platform_cost_monthly" value="80"
+                            class="input-field w-full rounded-md p-3" step="0.01">
+                        <p class="text-xs text-slate-500 mt-1">Ex: CRM, Chat tools (por agente)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Taxa Gestão (%)</label>
+                        <input type="number" name="mgmt_fee_rate" value="8" class="input-field w-full rounded-md p-3"
+                            step="0.1">
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-700 pt-4 mt-4">
+                    <h3 class="text-sm uppercase tracking-wider text-slate-500 font-bold mb-3">Produtividade</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Dias Úteis/Mês</label>
+                            <input type="number" name="work_days_month" value="22"
+                                class="input-field w-full rounded-md p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Atendimentos/Dia</label>
+                            <input type="number" name="interactions_per_day" value="48"
+                                class="input-field w-full rounded-md p-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center pt-8">
+        <button type="submit" class="btn-primary text-white font-bold py-4 px-12 rounded-full text-lg shadow-lg">
+            Gerar Relatório de ROI ✨
+        </button>
+    </div>
+</form>
+{% endblock %}
